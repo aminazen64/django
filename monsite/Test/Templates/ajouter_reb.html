@@ -1,0 +1,103 @@
+<!-- Charger jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Charger Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+
+<!-- Charger Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+<!-- Style CSS pour la police Courier New -->
+<style>
+    /* Appliquer Courier New aux éléments select dans le formulaire */
+    select {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 14px;
+    }
+
+    .select2-container .select2-selection--single, 
+    .select2-container .select2-selection--multiple {
+        font-family: 'Courier New', Courier !important;
+    }
+    .select2-container .select2-results__option {
+        font-family: 'Courier New', Courier !important;
+    }
+</style>
+
+<form method="post">
+    {% csrf_token %}
+    <h3>Chantier Sylviculture</h3>
+    {{ chantier_form.as_p }}
+
+    <h3>Travaux Chantier</h3>
+    {{ travaux_form.as_p }}
+
+    <button type="submit">Enregistrer</button>
+</form>
+
+<script>
+    $(document).ready(function() {
+  
+        $('select').select2({
+            width: '100%'  
+        });
+    });
+    
+$(document).ready(function () {
+    $('select').select2({ width: '100%' });
+
+    $('#id_travaux_niv3_n').change(function () {
+        var niv3Id = $(this).val();
+        $.ajax({
+            url: '{% url "get_niv4_by_niv3" %}',
+            data: { niv3_id: niv3Id },
+            success: function (data) {
+                $('#id_travaux_niv4_n').empty().append('<option value="">---------</option>');
+                $('#id_travaux_niv5_n').empty().append('<option value="">---------</option>');
+                $('#id_type_operation_n').empty().append('<option value="">---------</option>');
+                $.each(data, function (index, item) {
+                    $('#id_travaux_niv4_n').append(
+                        $('<option>', { value: item.nv4_codnv4_n, text: item.nv4_lib_a })
+                    );
+                });
+                $('#id_travaux_niv4_n').trigger('change');
+            }
+        });
+    });
+
+    $('#id_travaux_niv4_n').change(function () {
+        var niv4Id = $(this).val();
+        $.ajax({
+            url: '{% url "get_niv5_by_niv4" %}',
+            data: { niv4_id: niv4Id },
+            success: function (data) {
+                $('#id_travaux_niv5_n').empty().append('<option value="">---------</option>');
+                $('#id_type_operation_n').empty().append('<option value="">---------</option>');
+                $.each(data, function (index, item) {
+                    $('#id_travaux_niv5_n').append(
+                        $('<option>', { value: item.nv5_codnv5_n, text: item.nv5_lib_a })
+                    );
+                });
+                $('#id_travaux_niv5_n').trigger('change');
+            }
+        });
+    });
+
+    $('#id_travaux_niv5_n').change(function () {
+        var niv5Id = $(this).val();
+        $.ajax({
+            url: '{% url "get_ops_by_niv5" %}',
+            data: { niv5_id: niv5Id },
+            success: function (data) {
+                $('#id_type_operation_n').empty().append('<option value="">---------</option>');
+                $.each(data, function (index, item) {
+                    $('#id_type_operation_n').append(
+                        $('<option>', { value: item.typ_codope_n, text: item.typ_libope_a })
+                    );
+                });
+            }
+        });
+    });
+});
+</script>
+

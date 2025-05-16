@@ -1,0 +1,19 @@
+{% extends 'uo/base.html' %}
+{% load django_bootstrap5 %}  
+{% bootstrap_css %}  
+{% bootstrap_javascript %}  
+{% bootstrap_messages %}
+{% block content %}
+<div class="container mt-4">
+
+    <h1>Ajouter reboisement</h1>
+    
+    <form method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <button type="submit" class="btn btn-primary">Ajouter</button>
+        <a href="{% url 'list_reboisements'%}" class="btn btn-secondary">Retour à la liste des  list_reboisements</a>
+    </form>
+    
+
+{% endblock %}
