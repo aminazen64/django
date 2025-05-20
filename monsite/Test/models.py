@@ -7,6 +7,7 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
+
 class VBureau(models.Model):
     code_bureau = models.IntegerField(primary_key=True)
     nom_bureau = models.CharField(max_length=100)
@@ -141,6 +142,43 @@ class VSousTraitant(models.Model):
         managed = False
         db_table = 'V_SOUS_TRAITANTS'
 
+class VChantier(models.Model):
+    code_chantier = models.ForeignKey(V_TYPEChantier, on_delete=models.CASCADE, db_column='code_chantier', primary_key=True)
+    etat_garantie = models.CharField(max_length=10, blank=True, null=True)
+    agence = models.CharField(max_length=50, blank=True, null=True)
+    bureau = models.CharField(max_length=50, blank=True, null=True)
+    secteur = models.CharField(max_length=50, blank=True, null=True)
+    surface = models.DecimalField(max_digits=10, decimal_places=8, blank=True, null=True)
+    insee_commune = models.CharField(max_length=10, blank=True, null=True)
+    proprietaire = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False  
+        db_table = 'v_CHANTIERS_RECUPERATION_DATA'
+         
+class VSecteur(models.Model):
+ 
+    code_secteur = models.CharField(max_length=10, primary_key=True)  # Clé primaire
+    libelle_secteur = models.CharField(max_length=255)  # Libellé du secteur
+    code_agence = models.CharField(max_length=10)  
+
+    def __str__(self):
+        return self.libelle_secteur
+
+    class Meta:
+        managed = False  
+        db_table = 'V_SECTEURS'
+        
+class VAgence(models.Model):
+    agence = models.CharField(max_length=10, primary_key=True)  # Clé primaire pour l'agence
+
+    def __str__(self):
+        return self.agence
+
+    class Meta:
+        managed = False  # Ce modèle représente une vue, donc pas de migrations
+        db_table = 'V_AGENCES'  
+
 class ChantierSylvicultureHistory(models.Model):
     idchantier_sylviculture = models.IntegerField(db_column='IDchantier_sylviculture')  # Field name made lowercase.
     societe = models.CharField(max_length=50, db_collation='French_CI_AS', blank=True, null=True)
@@ -165,25 +203,29 @@ class ChantierSylvicultureHistory(models.Model):
 
 
 class TbChantierSylviculture(models.Model):
-    id_chantier_sylviculture_n = models.AutoField(db_column='Id_Chantier_Sylviculture_n', primary_key=True)
-    societe_n = models.ForeignKey(VSociete, on_delete=models.DO_NOTHING, db_column="societe_n")
-    type_chantier_n = models.ForeignKey(V_TYPEChantier, on_delete=models.DO_NOTHING, db_column="type_chantier_n", blank=True, null=True)
-    proprietaire_n = models.CharField(max_length=100, db_collation='French_CI_AS', blank=True, null=True)
-    proprietaire_libelle_libre_a = models.CharField(max_length=100, db_collation='French_CI_AS')
-    bureau_n = models.ForeignKey(VBureau, on_delete=models.DO_NOTHING, db_column="bureau_n")
-    secteur_n = models.IntegerField()
-    important = models.BooleanField()
-    surface_indicative_reboisement_n = models.DecimalField(max_digits=5, decimal_places=2)
-    commune_n = models.ForeignKey(VCommune, on_delete=models.DO_NOTHING, db_column="commune_n")
-    pepiniere_n = models.ForeignKey(VPepiniere, on_delete=models.DO_NOTHING, db_column="pepiniere_n", blank=True, null=True)
-    id_etat_n = models.ForeignKey('TbEtat', models.DO_NOTHING, db_column='id_etat_n')
+    id_chantier_sylviculture_n = models.AutoField(db_column='Id_Chantier_Sylviculture_n', primary_key=True)  # Field name made lowercase.
+    important = models.BooleanField(blank=True, null=True)
+    surface = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    proprietaire_libelle_libre = models.CharField(max_length=50, db_collation='French_CI_AS', blank=True, null=True)
+    subvention = models.CharField(max_length=1, db_collation='French_CI_AS', blank=True, null=True)
+    bloc_note = models.CharField(max_length=50, db_collation='French_CI_AS', blank=True, null=True)
+    date_creation = models.DateTimeField(blank=True, null=True)
+    societe =models.ForeignKey(VSociete, on_delete=models.CASCADE, blank=True, null=True ,db_column="societe")
+    agence = models.ForeignKey(VAgence, on_delete=models.CASCADE, blank=True, null=True , db_column="agence")
+    bureau = models.ForeignKey(VBureau, on_delete=models.CASCADE, blank=True, null=True , db_column="bureau")
+    secteur = models.ForeignKey(VSecteur, on_delete=models.CASCADE, blank=True, null=True , db_column="secteur")
+    type_chantier = models.ForeignKey(V_TYPEChantier , on_delete= models.CASCADE , db_column="type_chantier")  # Field name made lowercase.
+    id_insee = models.ForeignKey(VCommune, models.DO_NOTHING, db_column='id_insee', blank=True, null=True)
+    id_pepiniere = models.ForeignKey(VPepiniere, models.DO_NOTHING, db_column='id_pepiniere', blank=True, null=True)
+    nom_propietaire = models.CharField(max_length=50, db_collation='French_CI_AS', blank=True, null=True)
+    etat_id_n = models.ForeignKey('TbEtat', models.DO_NOTHING, db_column='etat_id_n', blank=True, null=True)
+    u_id_n = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'TB_Chantier_sylviculture'
 
 
-        
 class TbEtat(models.Model):
     id_etat_n = models.AutoField(db_column='Id_etat_n', primary_key=True)  # Field name made lowercase.
     type_a = models.CharField(max_length=50, db_collation='French_CI_AS', blank=True, null=True)
@@ -222,13 +264,12 @@ class TbTravauxChantier(models.Model):
     annee_n = models.IntegerField(blank=True, null=True)
     numero_semaine_a = models.CharField(max_length=1, db_collation='French_CI_AS', blank=True, null=True)
     quantite_n = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    travaux_niv3_n = models.ForeignKey(VNiv3TRAV, on_delete=models.DO_NOTHING, db_column="travaux_niv3_n")
-    travaux_niv4_n = models.ForeignKey(VNiV4TRAV, on_delete=models.DO_NOTHING, db_column="travaux_niv4_n", blank=True, null=True)
-    travaux_niv5_n = models.ForeignKey(VNIV5TRAV, on_delete=models.DO_NOTHING, db_column="travaux_niv5_n", blank=True, null=True)
-    type_operation_n = models.ForeignKey(VTypeOperation, on_delete=models.DO_NOTHING, db_column="type_operation_n", blank=True, null=True)
-    sous_traitant_n = models.ForeignKey(VSousTraitant, on_delete=models.DO_NOTHING, db_column="sous_traitant_n")
-    id_cs = models.ForeignKey(TbChantierSylviculture, on_delete=models.DO_NOTHING, db_column='id_cs')
-
+    travaux_niv3_n = models.ForeignKey(VNiv3TRAV, models.DO_NOTHING, db_column='travaux_niv3_n', blank=True, null=True)
+    travaux_niv4_n = models.ForeignKey(VNiV4TRAV, models.DO_NOTHING, db_column='travaux_niv4_n', blank=True, null=True)
+    travaux_niv5_n = models.ForeignKey(VNIV5TRAV, models.DO_NOTHING, db_column='travaux_niv5_n', blank=True, null=True)
+    type_operation_n = models.ForeignKey(VTypeOperation, models.DO_NOTHING, db_column='type_operation_n', blank=True, null=True)
+    sous_traitant_n = models.ForeignKey(VSousTraitant, models.DO_NOTHING, db_column='sous_traitant_n', blank=True, null=True)
+    id_cs = models.ForeignKey(TbChantierSylviculture, models.DO_NOTHING, db_column='id_cs')
 
     class Meta:
         managed = False
@@ -247,6 +288,17 @@ class Utilisateur(models.Model):
     class Meta:
         managed = False
         db_table = 'Utilisateur'
+
+
+class Utilisateurprocofor(models.Model):
+    username = models.CharField(max_length=50, db_collation='French_CI_AS')
+    role = models.CharField(max_length=2, db_collation='French_CI_AS')
+    id_utili_n = models.AutoField(primary_key=True)
+    user_djan = models.ForeignKey('AuthUser', models.DO_NOTHING, db_column='user_djan', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'UtilisateurProcofor'
 
 
 class AuthGroup(models.Model):

@@ -1,36 +1,30 @@
 <h2>Liste des chantiers</h2>
+
 <table border="1">
     <thead>
         <tr>
-            <th>Genre</th>
-            <th>Terminé</th>
+            <th>Type</th>
             <th>Commune</th>
             <th>Surface</th>
             <th>Société</th>
-            <th>Date</th>
-            <th>Campagne</th>
+            <th>Date création</th>
+            <th>Important</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         {% for c in chantiers %}
         <tr>
-            <td>{{ c.genre }}</td>
-            <td>{{ c.termine|yesno:"Oui,Non" }}</td>
-            <td>{{ c.commune }}</td>
+            <td>{{ c.type_chantier.libelle }}</td>
+            <td>{{ c.id_insee}}</td>
             <td>{{ c.surface }}</td>
-            <td>{{ c.societe }}</td>
-            <td>{{ c.date|date:"d/m/Y H:i" }}</td>
-            <td>{{ c.campagne }}</td>
-            <td>
-                <a href="{% url 'edit_chantier' c.id_chantier %}">
-                    <button>Modifier</button>
-                </a>
-            </td>
+            <td>{{ c.societe.libelle }}</td>
+            <td>{{ c.important|yesno:"Oui,Non" }}</td>
+  
         </tr>
         {% empty %}
         <tr>
-            <td colspan="8">Aucun chantier disponible.</td>
+            <td colspan="7">Aucun chantier disponible.</td>
         </tr>
         {% endfor %}
     </tbody>
