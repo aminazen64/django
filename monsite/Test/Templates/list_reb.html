@@ -1,5 +1,18 @@
-<h2>Liste des chantiers</h2>
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulaire Chantier</title>
 
+
+    <!-- Ton CSS -->
+    <link rel="stylesheet" href="{% static 'css/liste.css' %}"> <!-- Si Django -->
+
+</head>
+<body>
+      <h2>liste chantiers</h2>
+      <a  href="{% url 'ajouter_chantier' %}">Ajouter un chantier</a>
 <table border="1">
     <thead>
         <tr>
@@ -7,7 +20,6 @@
             <th>Commune</th>
             <th>Surface</th>
             <th>Société</th>
-            <th>Date création</th>
             <th>Important</th>
             <th>Actions</th>
         </tr>
@@ -15,12 +27,16 @@
     <tbody>
         {% for c in chantiers %}
         <tr>
-            <td>{{ c.type_chantier.libelle }}</td>
-            <td>{{ c.id_insee}}</td>
+            <td>{{ c.type_chantier }}</td>
+            <td>{{ c.id_insee }}</td>
             <td>{{ c.surface }}</td>
-            <td>{{ c.societe.libelle }}</td>
+            <td>{{ c.societe }}</td>
             <td>{{ c.important|yesno:"Oui,Non" }}</td>
-  
+          <td>
+        <a class="btn btn-ajouter" href="{% url 'ajouter_travaux_chantier' c.id_chantier_sylviculture_n %}">Ajouter travaux</a>
+        <a class="btn btn-voir" href="{% url 'voir_travaux_chantier' c.id_chantier_sylviculture_n %}">Voir travaux</a>
+        <a class="btn btn-voir" href="{% url 'liste_ilots' c.id_chantier_sylviculture_n %}" class="btn-success btn-sm">Voir îlots</a>
+            </td>
         </tr>
         {% empty %}
         <tr>
@@ -30,7 +46,6 @@
     </tbody>
 </table>
 
-<br>
-<a href="{% url 'ajouter_chantier' %}">
-    <button>Ajouter un nouveau chantier</button>
-</a>
+</body>
+</html>
+

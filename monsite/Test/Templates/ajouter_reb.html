@@ -3,7 +3,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Formulaire Chantier</title>
+    <title>Reboisement</title>
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -12,7 +12,9 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 
     <!-- Ton CSS -->
-    <link rel="stylesheet" href="{% static 'css/ajouter.css' %}"> <!-- Si Django -->
+    <link rel="stylesheet" href="{% static 'css/ajouter.css' %}"> 
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+
 
 </head>
 <body>
@@ -20,11 +22,10 @@
     <!-- FORMULAIRE -->
     <form method="post">
         {% csrf_token %}
-        <h3>Chantier Sylviculture</h3>
+        <h3>Reboisement</h3>
+{{ form.chantier_virtuel.label_tag }}
+  {{ form.chantier_virtuel }}
         {{ chantier_form }}
-
-        <h3>Travaux Chantier</h3>
-        {{ travaux_form }}
 
         <button type="submit">Enregistrer</button>
     </form>
@@ -33,11 +34,9 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 
 <script>
-    const getNiv4Url = "{% url 'get_niv4_by_niv3' %}";
-    const getNiv5Url = "{% url 'get_niv5_by_niv4' %}";
-    const getOpsUrl = "{% url 'get_ops_by_niv5' %}";
+
     const getChantierDetailsUrl = "{% url 'get_chantier_details' %}";
 </script>
-    <script src="{% static 'js/ajouter.js' %}"></script> <!-- Si Django -->
+    <script src="{% static 'js/ajouter.js' %}"></script> 
 </body>
 </html>

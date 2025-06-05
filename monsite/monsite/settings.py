@@ -13,6 +13,24 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
+import logging
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console':{
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    }
+}
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -88,7 +106,7 @@ DATABASES = {
         'PORT': '1433',
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
-            'unicode_results': True,
+            
         
         },
     },
@@ -129,8 +147,11 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # Ici tu peux avoir un répertoire 'static'
+
+STATIC_URL = '/static/'
+
+
+STATICFILES_DIRS = [BASE_DIR / "static"]   # Ici tu peux avoir un répertoire 'static'
 
 # Répertoire où collectstatic copie les fichiers pour la production
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  
@@ -139,14 +160,3 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 LANGUAGE_CODE = 'fr'
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache", 
-    }
-}
-
-
-# Tell select2 which cache configuration to use:
-SELECT2_CACHE_BACKEND = "default" 
